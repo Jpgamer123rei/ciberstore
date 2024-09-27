@@ -4,98 +4,41 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Loja Online</title>
+	<title>Loja de Notebooks</title>
 	<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 	<header>
-		<h1>Bem-vindo à Nossa Loja Online</h1>
+		<h1>Loja de Notebooks</h1>
 		<nav>
-			<a href="index.html">Início</a>
-			<a href="produtos.html">Produtos</a>
-			<a href="carrinho.html">Carrinho</a>
+			<a href="#" onclick="mostrarHome()">Home</a>
+			<a href="#" onclick="mostrarProdutos()">Produtos</a>
+			<a href="#" onclick="mostrarCarrinho()">Carrinho</a>
+			<a href="#">Sobre Nós</a>
+			<a href="#">Contato</a>
 		</nav>
 	</header>
+
 	<main>
-		<h2>Novidades</h2>
-		<p>Aqui você encontrará os produtos mais recentes!</p>
-	</main>
-	<footer>
-		<p>&copy; 2024 Loja Online</p>
-	</footer>
-	<script src="script.js"></script>
-</body>
+		<section id="home" class="section">
+			<div class="banner">
+				<h2>Promoções Imperdíveis!</h2>
+			</div>
+		</section>
+		<h2>Notebooks em Destaque</h2>
+		<div class="produtos-container">
+			<div class="produto">
+				<img src="https://tse1.mm.bing.net/th?id=OIP.bp3Fit2Z7Zuv_9UWOMJqCQHaHa&pid=Api" alt="Notebook 1">
+				<h3>Notebook XYZ</h3>
+				<p>R$ 3.499,00</p>
 
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Produtos</title>
-	<link rel="stylesheet" href="styles.css">
-</head>
 
-<body>
-	<header>
-		<h1>Nossos Produtos</h1>
-		<nav>
-			<a href="index.html">Início</a>
-			<a href="produtos.html">Produtos</a>
-			<a href="carrinho.html">Carrinho</a>
-		</nav>
-	</header>
-	<main>
-		<div class="produto">
-			<h3>Produto 1</h3>
-			<p>Descrição do Produto 1.</p>
-			<button onclick="adicionarAoCarrinho('Produto 1')">Adicionar ao Carrinho</button>
-		</div>
-		<div class="produto">
-			<h3>Produto 2</h3>
-			<p>Descrição do Produto 2.</p>
-			<button onclick="adicionarAoCarrinho('Produto 2')">Adicionar ao Carrinho</button>
-		</div>
-		<!-- Adicione mais produtos conforme necessário -->
-	</main>
-	<footer>
-		<p>&copy; 2024 Loja Online</p>
-	</footer>
-	<script src="script.js"></script>
-</body>
-
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Carrinho</title>
-	<link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-	<header>
-		<h1>Carrinho de Compras</h1>
-		<nav>
-			<a href="index.html">Início</a>
-			<a href="produtos.html">Produtos</a>
-			<a href="carrinho.html">Carrinho</a>
-		</nav>
-	</header>
-	<main>
-		<ul id="carrinho">
-			<!-- Os produtos adicionados aparecerão aqui -->
-		</ul>
-		<button onclick="finalizarCompra()">Finalizar Compra</button>
-	</main>
-	<footer>
-		<p>&copy; 2024 Loja Online</p>
-	</footer>
-	<script src="script.js"></script>
-</body>
-
-</html>
+		<section id="produtos" class="section" style="display:none;">
+			<h2>Notebooks em Destaque</h2>
+			<div class="produtos-container">
+				<div class="produto">
+					<img src="https://tse1.mm.bing.net/th?id=OIP.bp3Fit2Z7Zuv_9UWOMJqCQHaHa&pid=Api" alt="Notebook 1">
+					<h3>Notebook XYZ</h3>
+					<p>R$ 3.499,00</p>

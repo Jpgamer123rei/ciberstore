@@ -20,25 +20,60 @@
 		</nav>
 	</header>
 
+	<!-- Notification Div -->
+	<div id="notificacao" class="notificacao" style="display:none;"></div>
+
 	<main>
 		<section id="home" class="section">
 			<div class="banner">
 				<h2>Promoções Imperdíveis!</h2>
+				<p>Aproveite nossos descontos exclusivos!</p>
 			</div>
 		</section>
-		<h2>Notebooks em Destaque</h2>
-		<div class="produtos-container">
-			<div class="produto">
-				<img src="https://tse1.mm.bing.net/th?id=OIP.bp3Fit2Z7Zuv_9UWOMJqCQHaHa&pid=Api" alt="Notebook 1">
-				<h3>Notebook XYZ</h3>
-				<p>R$ 3.499,00</p>
-
-
 
 		<section id="produtos" class="section" style="display:none;">
 			<h2>Notebooks em Destaque</h2>
 			<div class="produtos-container">
 				<div class="produto">
-					<img src="https://tse1.mm.bing.net/th?id=OIP.bp3Fit2Z7Zuv_9UWOMJqCQHaHa&pid=Api" alt="Notebook 1">
-					<h3>Notebook XYZ</h3>
-					<p>R$ 3.499,00</p>
+					<img src="https://http2.mlstatic.com/D_NQ_NP_967249-MLB78525331318_082024-O.webp" alt="Notebook 1">
+					<h3>Notebook Asus</h3>
+					<p>R$2.652</p>
+					<button onclick="adicionarCarrinho('Notebook Asus', 3499)">Adicionar ao Carrinho</button>
+				</div>
+				<div class="produto">
+					<img src="https://http2.mlstatic.com/D_NQ_NP_679177-MLA76804357152_062024-O.webp" alt="Notebook 2">
+					<h3>Notebook Gamer Lenovo</h3>
+					<p>R$ 4.129</p>
+					<button onclick="adicionarCarrinho('Notebook Gamer Lenovo', 4199)">Adicionar ao Carrinho</button>
+				</div>
+				<div class="produto">
+					<img src="https://http2.mlstatic.com/D_NQ_NP_757417-MLU76569758316_062024-O.webp" alt="Notebook 3">
+					<h3>Notebook Gamer Acer Nitro V15</h3>
+					<p>R$ 2.999,00</p>
+					<button onclick="adicionarCarrinho('Notebook Gamer Acer Nitro V15', 2999)">Adicionar ao Carrinho</button>
+				</div>
+				<div class="produto">
+					<img src="https://http2.mlstatic.com/D_NQ_NP_765478-MLU77376803807_072024-O.webp" alt="Notebook 4">
+					<h3>Notebook Positivo Vision i15</h3>
+					<p>R$ 2.291</p>
+					<button onclick="adicionarCarrinho('Notebook Positivo Vision i15', 3799)">Adicionar ao Carrinho</button>
+				</div>
+			</div>
+		</section>
+
+		<section id="carrinho" class="section" style="display:none;">
+			<h2>Carrinho de Compras</h2>
+			<div id="itens-carrinho"></div>
+			<div id="total">Total: R$ 0,00</div>
+			<button onclick="finalizarCompra()">Finalizar Compra</button>
+		</section>
+	</main>
+
+	<footer>
+		<p>&copy; 2024 Loja de Notebooks. Todos os direitos reservados.</p>
+	</footer>
+
+	<script src="script.js"></script>
+</body>
+
+</html>

@@ -1,94 +1,106 @@
-let carrinho = [];
-
-function mostrarHome() {
-  document.getElementById('home').style.display = 'block';
-  document.getElementById('produtos').style.display = 'none';
-  document.getElementById('carrinho').style.display = 'none';
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
 }
 
-function mostrarProdutos() {
-  document.getElementById('home').style.display = 'none';
-  document.getElementById('produtos').style.display = 'block';
-  document.getElementById('carrinho').style.display = 'none';
+header {
+    text-align: center;
+    background: #007bff;
+    color: white;
+    padding: 10px 0;
 }
 
-function mostrarCarrinho() {
-  document.getElementById('home').style.display = 'none';
-  document.getElementById('produtos').style.display = 'none';
-  document.getElementById('carrinho').style.display = 'block';
-  renderizarCarrinho();
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
-function adicionarCarrinho(nome, preco) {
-  carrinho.push({ nome, preco });
-  alert(`${nome} adicionado ao carrinho!`);
-  renderizarCarrinho();
+nav a:hover {
+    color: #d1d1d1;
 }
 
-function renderizarCarrinho() {
-  const itensCarrinho = document.getElementById('itens-carrinho');
-  const totalDiv = document.getElementById('total');
-  itensCarrinho.innerHTML = '';
-  let total = 0;
-
-  carrinho.forEach((item, index) => {
-    total += item.preco;
-    itensCarrinho.innerHTML += `
-            <div>${item.nome} - R$ ${item.preco.toFixed(2)} <button onclick="removerDoCarrinho(${index})">Remover</button></div>
-        `;
-  });
-
-  totalDiv.innerHTML = `Total: R$ ${total.toFixed(2)}`;
+.section {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
 
-function removerDoCarrinho(index) {
-  carrinho.splice(index, 1);
-  renderizarCarrinho();
+.produtos-container {
+    display: flex;
+    flex-wrap: wrap;
 }
 
-function finalizarCompra() {
-  if (carrinho.length === 0) {
-    alert("Seu carrinho está vazio!");
-  } else {
-    alert("Compra finalizada! Obrigado pela sua compra!");
-    carrinho = [];
-    renderizarCarrinho();
-    mostrarHome();
-  }
+.produto {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    width: calc(50% - 20px);
+    transition: transform 0.3s;
 }
 
-// Mostrar a home por padrão ao carregar
-mostrarHome();
-
-function mostrarNotificacao(mensagem) {
-  const notificacao = document.getElementById('notificacao');
-  notificacao.innerText = mensagem;
-  notificacao.style.display = 'block';
-  setTimeout(() => {
-    notificacao.style.display = 'none';
-  }, 3000); // Esconde a notificação após 3 segundos
+.produto:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-function adicionarCarrinho(nome, preco) {
-  carrinho.push({ nome, preco });
-  mostrarNotificacao(`${nome} adicionado ao carrinho!`);
-  renderizarCarrinho();
+.produto img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
 }
 
-function finalizarCompra() {
-  if (carrinho.length === 0) {
-    mostrarNotificacao("Seu carrinho está vazio!");
-  } else {
-    mostrarNotificacao("Compra finalizada! Obrigado pela sua compra!");
-    carrinho = [];
-    renderizarCarrinho();
-    mostrarHome();
-  }
+button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-function removerDoCarrinho(index) {
-  const itemRemovido = carrinho[index].nome; // Captura o nome do item que será removido
-  carrinho.splice(index, 1);
-  mostrarNotificacao(`${itemRemovido} removido do carrinho!`); // Notifica o usuário
-  renderizarCarrinho();
+button:hover {
+    background: #218838;
+}
+
+#total {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+notificacao {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    border-radius: 5px;
+}
+.notificacao {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 1000;
 }

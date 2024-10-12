@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Loja Online</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			margin: 0;
+			padding: 20px;
+		}
+
+		header {
+			text-align: center;
+			background: #007bff;
+			color: white;
+			padding: 10px 0;
+		}
+
+		nav a {
+			color: white;
+			margin: 0 15px;
+			text-decoration: none;
+		}
+
+		.section {
+			max-width: 800px;
+			margin: auto;
+			background: white;
+			padding: 20px;
+			border-radius: 5px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			margin-bottom: 20px;
+		}
+
+		.produtos-container {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		.produto-item {
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			padding: 10px;
+			margin: 10px;
+			text-align: center;
+			flex: 1 0 30%;
+			transition: transform 0.2s;
+		}
+
+		.produto-item:hover {
+			transform: scale(1.05);
+		}
+
+		.notificacao {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background-color: #4CAF50;
+			color: white;
+			padding: 15px;
+			border-radius: 5px;
+			display: none;
+			z-index: 1000;
+		}
+
+		button {
+			background: #28a745;
+			color: white;
+			border: none;
+			padding: 5px 10px;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		button:hover {
+			background: #218838;
+		}
+
+		.avaliacao {
+			margin-top: 10px;
+		}
+
+		.carrinho-item {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.carrinho-item img {
+			width: 50px;
+		}
+
+		.form-container {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.form-container input {
+			margin-bottom: 10px;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h1>Loja Online</h1>
+		<nav>
+			<a href="#" onclick="mostrarHome()">Home</a>
+			<a href="#" onclick="mostrarProdutos()">Produtos</a>
+			<a href="#" onclick="mostrarCarrinho()">Carrinho</a>
+			<a href="#" onclick="mostrarLogin()">Login</a>
+		</nav>
+	</header>
+
+	<div class="notificacao" id="notificacao"></div>
+
+	<div class="section" id="home">
+		<h2>Bem-vindo à nossa loja!</h2>
+		<p>Explore nossos produtos e aproveite as melhores ofertas!</p>
+	</div>
+
+	<div class="section" id="produtos" style="display:none;">
+		<h2>Produtos</h2>
+		<div class="produtos-container" id="listaProdutos"></div>
+	</div>
+
+	<div class="section" id="carrinho" style="display:none;">
+		<h2>Carrinho</h2>
+		<div id="itens-carrinho"></div>
+		<div id="total"></div>
+		<button onclick="finalizarCompra()">Finalizar Compra</button>
+	</div>
+
+	<div class="section" id="login" style="display:none;">
+		<h2>Login</h2>
+		<div class="form-container">
+			<input type="text" id="loginEmail" placeholder="Email" />
+			<input type="password" id="loginSenha" placeholder="Senha" />
+			<button onclick="login()">Entrar</button>
+			<p>Ainda não tem uma conta? <a href="#" onclick="mostrarRegistro()">Registre-se</a></p>
+		</div>
+	</div>
+
+	<div class="section" id="registro" style="display:none;">
+		<h2>Registrar</h2>
+		<div class="form-container">
+			<input type="text" id="registroNome" placeholder="Nome" />
+			<input type="text" id="registroEmail" placeholder="Email" />
+			<input type="password" id="registroSenha" placeholder="Senha" />
+			<button onclick="registrar()">Registrar</button>
+			<p>Já tem uma conta? <a href="#" onclick="mostrarLogin()">Faça login</a></p>
+		</div>
+	</div>
+
+	<script>
+		let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    let usuarioAtual = null;
+
+    const produtos = [
+        { nome: "Produto 1", preco: 29.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 1.", avaliacao: [] },
+        { nome: "Produto 2", preco: 49.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 2.", avaliacao: [] },
+        { nome: "Produto 3", preco: 19.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 3.", avaliacao: [] }
+    ];
+
+    function mostrarHome() {
+        document.getElementById('home').style.display = 'block';
+        document.getElementById('produtos').style.display = 'none';
+        document.getElementById('carrinho').style.display = 'none';
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('registro').style.display = 'none';
+    }
+
+    function mostrarProdutos() {
+        document.getElementById('home').style.display = 'none';
+        document.getElementById('produtos').style.display = 'block';
+        document.getElementById('carrinho').style.display = 'none';
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('registro').style.display = 'none';
+        renderizarProdutos();
+    }
+
+    function mostrarCarrinho() {
+        if (!usuarioAtual) {
+            mostrarNotificacao("Você precisa estar logado para acessar o carrinho!");
+            return;
+        }
+        document.getElementById('home').style.display = 'none';
+        document.getElementById('produtos').style.display = 'none';
+        document.getElementById('carrinho').style.display = 'block';
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('registro').style.display = 'none';
+        renderizarCarrinho();
+    }
+
+    function mostrarLogin() {
+        document.getElementById('home').style.display = 'none';
+        document.getElementById('produtos').style.display = 'none';
+        document.getElementById('carrinho').style.display = 'none';
+        document.getElementById('login').style.display = 'block';
+        document.getElementById('registro').style.display = 'none';
+    }
+
+    function mostrarRegistro() {
+        document.getElementById('home').style.display = 'none';
+        document.getElementById('produtos').style.display = 'none';
+        document.getElementById('carrinho').style.display = 'none';
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('registro').style.display = 'block';
+    }
+
+    function adicionarCarrinho(nome, preco, imagem) {
+        if (!usuarioAtual) {
+            mostrarNotificacao("Você precisa estar logado para adicionar itens ao carrinho!");
+            return;
+        }
+        const itemExistente = carrinho.find(item => item.nome === nome);
+        if (itemExistente) {
+            itemExistente.quantidade += 1;
+            mostrarNotificacao(`${nome} já está no carrinho. Quantidade aumentada para ${itemExistente.quantidade}!`);
+        } else {
+            carrinho.push({ nome, preco, imagem, quantidade: 1 });
+            mostrarNotificacao(`${nome} adicionado ao carrinho!`);
+        }
+        salvarCarrinho();
+        renderizarCarrinho();
+    }
+
+    function salvarCarrinho() {
+        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    }
+
+    function renderizarCarrinho() {
+        const itensCarrinho = document.getElementById('itens-carrinho');
+        const totalDiv = document.getElementById('total');
+        itensCarrinho.innerHTML = '';
+        let total = 0;
+
+        carrinho.forEach(item => {
+            total += item.preco * item.quantidade;
+            itensCarrinho.innerHTML += `
+                <div class="carrinho-item">
+                    <img src="${item.imagem}" alt="${item.nome}">
+                    <div>${item.nome} - R$ ${item.preco.toFixed(2)} x ${item.quantidade}</div>
+                    <div>
+                        <button onclick="alterarQuantidade('${item.nome}', -1)">-</button>
+                        <button onclick="alterarQuantidade('${item.nome}', 1)">+</button>
+                        <button onclick="removerDoCarrinho('${item.nome}')">Remover</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        totalDiv.innerHTML = `Total: R$ ${total.toFixed(2)}`;
+    }
+
+    function alterarQuantidade(nome, delta) {
+        const item = carrinho.find(item => item.nome === nome);
+        if (item) {
+            item.quantidade += delta;
+            if (item.quantidade <= 0) {
+                removerDoCarrinho(nome);
+            } else {
+                salvarCarrinho();
+                renderizarCarrinho();
+            }
+        }
+    }
+
+    function removerDoCarrinho(nome) {
+        const index = carrinho.findIndex(item => item.nome === nome);
+        if (index > -1) {
+            carrinho.splice(index, 1);
+            mostrarNotificacao(`${nome} removido do carrinho!`);
+            salvarCarrinho();
+            renderizarCarrinho();
+        }
+    }
+
+    function finalizarCompra() {
+        if (carrinho.length === 0) {
+            mostrarNotificacao("Seu carrinho está vazio!");
+        } else {
+            mostrarNotificacao("Compra finalizada! Obrigado pela sua compra!");
+            carrinho = [];
+            salvarCarrinho();
+            renderizarCarrinho();
+            mostrarHome();
+        }
+    }
+
+    function mostrarNotificacao(mensagem) {
+        const notificacao = document.getElementById('notificacao');
+        notificacao.innerText = mensagem;
+        notificacao.style.display = 'block';
+        setTimeout(() => {
+            notificacao.style.display = 'none';
+        }, 3000);
+    }
+
+    function renderizarProdutos() {
+        const listaProdutos = document.getElementById('listaProdutos');
+        listaProdutos.innerHTML = '';
+
+        produtos.forEach(produto => {
+            const media = calcularMediaAvaliacao(produto);
+            listaProdutos.innerHTML += `
+                <div class="produto-item">
+                    <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100px;">
+                    <h3>${produto.nome}</h3>
+                    <p>R$ ${produto.preco.toFixed(2)}</p>
+                    <div class="avaliacao">
+                        <strong>Avaliação: ${media.toFixed(1)}⭐</strong>
+                        ${[1, 2, 3, 4, 5].map(nota => `<button onclick="avaliarProduto('${produto.nome}', ${nota})">${nota}⭐</button>`).join('')}
+                    </div>
+                    <button onclick="adicionarCarrinho('${produto.nome}', ${produto.preco}, '${produto.imagem}')">Adicionar ao Carrinho</button>
+                </div>
+            `;
+        });
+    }
+
+    function avaliarProduto(nome, nota) {
+        const produto = produtos.find(p => p.nome === nome);
+        if (produto) {
+            produto.avaliacao.push(nota);
+            mostrarNotificacao(`Obrigado pela sua avaliação de ${nota} estrelas para ${nome}!`);
+            renderizarProdutos();
+        }
+    }
+
+    function calcularMediaAvaliacao(produto) {
+        const total = produto.avaliacao.reduce((acc, curr) => acc + curr, 0);
+        return produto.avaliacao.length > 0 ? total / produto.avaliacao.length : 0;
+    }
+
+    function registrar() {
+        const nome = document.getElementById('registroNome').value;
+        const email = document.getElementById('registroEmail').value;
+        const senha = document.getElementById('registroSenha').value;
+
+        if (usuarios.find(usuario => usuario.email === email)) {
+            mostrarNotificacao("Esse email já está cadastrado!");
+            return;
+        }
+
+        usuarios.push({ nome, email, senha });
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        mostrarNotificacao("Registro realizado com sucesso!");
+        mostrarLogin();
+    }
+
+    function login() {
+        const email = document.getElementById('loginEmail').value;
+        const senha = document.getElementById('loginSenha').value;
+        const usuario = usuarios.find(usuario => usuario.email === email && usuario.senha === senha);
+
+        if (usuario) {
+            usuarioAtual = usuario;
+            mostrarNotificacao(`Bem-vindo, ${usuario.nome}!`);
+            mostrarHome();
+        } else {
+            mostrarNotificacao("Email ou senha incorretos!");
+        }
+    }
+
+    // Mostrar a home por padrão ao carregar
+    mostrarHome();
+	</script>
+
+</body>
+
+</html>

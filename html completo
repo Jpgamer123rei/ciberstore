@@ -11,6 +11,7 @@
 			background-color: #f4f4f4;
 			margin: 0;
 			padding: 20px;
+			transition: background-color 0.3s, color 0.3s;
 		}
 
 		header {
@@ -18,6 +19,7 @@
 			background: #007bff;
 			color: white;
 			padding: 10px 0;
+			transition: background 0.3s;
 		}
 
 		nav a {
@@ -34,6 +36,7 @@
 			border-radius: 5px;
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 			margin-bottom: 20px;
+			transition: background 0.3s, color 0.3s;
 		}
 
 		.notificacao {
@@ -74,6 +77,48 @@
 			border-radius: 50%;
 			margin-bottom: 10px;
 		}
+
+		/* Dark mode styles */
+		body.dark-mode {
+			background-color: #121212;
+			color: white;
+		}
+
+		header.dark-mode {
+			background: #1e1e1e;
+		}
+
+		.section.dark-mode {
+			background: #1e1e1e;
+			color: white;
+		}
+
+		.notificacao.dark-mode {
+			background-color: #388e3c;
+		}
+
+		.produto {
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			padding: 10px;
+			margin-bottom: 10px;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		.produto:hover {
+			background: #f0f0f0;
+		}
+
+		.produto img {
+			max-width: 100px;
+			margin-right: 10px;
+		}
+
+		.produto-container {
+			display: flex;
+			align-items: center;
+		}
 	</style>
 </head>
 
@@ -87,6 +132,7 @@
 			<a href="#" onclick="mostrarCarrinho()">Carrinho</a>
 			<a href="#" onclick="mostrarLogin()">Login</a>
 			<a href="#" onclick="mostrarPerfil()" id="linkPerfil" style="display:none;">Perfil</a>
+			<button onclick="toggleDarkMode()">Mudar para Dark Mode</button>
 		</nav>
 	</header>
 
@@ -135,7 +181,22 @@
 		<img id="perfilImagem" class="perfil-imagem" src="https://via.placeholder.com/150" alt="Imagem de perfil" />
 		<div id="informacoesPerfil"></div>
 		<input type="file" id="uploadImagem" accept="image/*" onchange="atualizarImagem(event)" />
-		<button onclick="editarPerfil()">Editar Nome</button>
+		<h3>Configurações</h3>
+		<div class="form-container">
+			<input type="text" id="configNome" placeholder="Nome" />
+			<input type="email" id="configEmail" placeholder="Email" />
+			<input type="password" id="configSenha" placeholder="Nova Senha" />
+			<button onclick="salvarConfiguracoes()">Salvar Configurações</button>
+		</div>
+	</div>
+
+	<div class="section" id="detalhesProduto" style="display:none;">
+		<h2 id="nomeProduto"></h2>
+		<img id="imagemProduto" src="" alt="Imagem do Produto" style="max-width: 200px;" />
+		<p id="descricaoProduto"></p>
+		<p><strong>Preço: R$ <span id="precoProduto"></span></strong></p>
+		<button onclick="adicionarCarrinho()">Adicionar ao Carrinho</button>
+		<button onclick="mostrarProdutos()">Voltar</button>
 	</div>
 
 	<script>
@@ -143,13 +204,15 @@
         const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
         let usuarioAtual = null;
 
-        // Default user profile image
         const defaultImage = "https://via.placeholder.com/150";
 
         const produtos = [
-            { nome: "Produto 1", preco: 29.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 1.", avaliacao: [] },
-            { nome: "Produto 2", preco: 49.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 2.", avaliacao: [] },
-            { nome: "Produto 3", preco: 19.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 3.", avaliacao: [] }
+            { nome: "Produto 1", preco: 29.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 1." },
+            { nome: "Produto 2", preco: 49.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 2." },
+            { nome: "Produto 3", preco: 19.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 3." },
+            { nome: "Produto 4", preco: 39.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 4." },
+            { nome: "Produto 5", preco: 59.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 5." },
+            { nome: "Produto 6", preco: 89.99, imagem: "https://via.placeholder.com/150", descricao: "Descrição do Produto 6." },
         ];
 
         function mostrarHome() {
@@ -159,6 +222,7 @@
             document.getElementById('login').style.display = 'none';
             document.getElementById('registro').style.display = 'none';
             document.getElementById('perfil').style.display = 'none';
+            document.getElementById('detalhesProduto').style.display = 'none';
         }
 
         function mostrarProdutos() {
@@ -168,20 +232,18 @@
             document.getElementById('login').style.display = 'none';
             document.getElementById('registro').style.display = 'none';
             document.getElementById('perfil').style.display = 'none';
+            document.getElementById('detalhesProduto').style.display = 'none';
             renderizarProdutos();
         }
 
         function mostrarCarrinho() {
-            if (!usuarioAtual) {
-                mostrarNotificacao("Você precisa estar logado para acessar o carrinho!");
-                return;
-            }
             document.getElementById('home').style.display = 'none';
             document.getElementById('produtos').style.display = 'none';
             document.getElementById('carrinho').style.display = 'block';
             document.getElementById('login').style.display = 'none';
             document.getElementById('registro').style.display = 'none';
             document.getElementById('perfil').style.display = 'none';
+            document.getElementById('detalhesProduto').style.display = 'none';
             renderizarCarrinho();
         }
 
@@ -192,6 +254,7 @@
             document.getElementById('login').style.display = 'block';
             document.getElementById('registro').style.display = 'none';
             document.getElementById('perfil').style.display = 'none';
+            document.getElementById('detalhesProduto').style.display = 'none';
         }
 
         function mostrarRegistro() {
@@ -201,6 +264,7 @@
             document.getElementById('login').style.display = 'none';
             document.getElementById('registro').style.display = 'block';
             document.getElementById('perfil').style.display = 'none';
+            document.getElementById('detalhesProduto').style.display = 'none';
         }
 
         function mostrarPerfil() {
@@ -223,6 +287,8 @@
                 <p><strong>Nome:</strong> ${usuarioAtual.nome}</p>
                 <p><strong>Email:</strong> ${usuarioAtual.email}</p>
             `;
+            document.getElementById('configNome').value = usuarioAtual.nome;
+            document.getElementById('configEmail').value = usuarioAtual.email;
             document.getElementById('perfilImagem').src = usuarioAtual.imagem || defaultImage;
         }
 
@@ -238,14 +304,64 @@
             reader.readAsDataURL(arquivo);
         }
 
-        function editarPerfil() {
-            const novoNome = prompt("Digite seu novo nome:", usuarioAtual.nome);
+        function salvarConfiguracoes() {
+            const novoNome = document.getElementById('configNome').value;
+            const novoEmail = document.getElementById('configEmail').value;
+            const novaSenha = document.getElementById('configSenha').value;
+
             if (novoNome) {
                 usuarioAtual.nome = novoNome;
-                localStorage.setItem('usuarios', JSON.stringify(usuarios));
-                mostrarNotificacao("Perfil atualizado com sucesso!");
-                renderizarPerfil();
             }
+            if (novoEmail) {
+                usuarioAtual.email = novoEmail;
+            }
+            if (novaSenha) {
+                usuarioAtual.senha = novaSenha;
+            }
+
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            mostrarNotificacao("Configurações salvas com sucesso!");
+            renderizarPerfil();
+        }
+
+        function renderizarProdutos() {
+            const listaProdutos = document.getElementById('listaProdutos');
+            listaProdutos.innerHTML = '';
+
+            produtos.forEach(produto => {
+                const produtoDiv = document.createElement('div');
+                produtoDiv.classList.add('produto');
+                produtoDiv.innerHTML = `
+                    <div class="produto-container">
+                        <img src="${produto.imagem}" alt="${produto.nome}" />
+                        <div>
+                            <h3>${produto.nome}</h3>
+                            <p>Preço: R$ ${produto.preco.toFixed(2)}</p>
+                            <button onclick="mostrarDetalhesProduto('${produto.nome}')">Ver Detalhes</button>
+                            <button onclick="adicionarCarrinho('${produto.nome}', ${produto.preco}, '${produto.imagem}')">Adicionar ao Carrinho</button>
+                        </div>
+                    </div>
+                `;
+                listaProdutos.appendChild(produtoDiv);
+            });
+        }
+
+        function mostrarDetalhesProduto(nomeProduto) {
+            const produto = produtos.find(p => p.nome === nomeProduto);
+            if (!produto) return;
+
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('produtos').style.display = 'none';
+            document.getElementById('carrinho').style.display = 'none';
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('registro').style.display = 'none';
+            document.getElementById('perfil').style.display = 'none';
+            document.getElementById('detalhesProduto').style.display = 'block';
+
+            document.getElementById('nomeProduto').innerText = produto.nome;
+            document.getElementById('imagemProduto').src = produto.imagem;
+            document.getElementById('descricaoProduto').innerText = produto.descricao;
+            document.getElementById('precoProduto').innerText = produto.preco.toFixed(2);
         }
 
         function adicionarCarrinho(nome, preco, imagem) {
@@ -266,7 +382,7 @@
             carrinho.forEach(item => {
                 const itemCarrinho = document.createElement('div');
                 itemCarrinho.innerHTML = `
-                    <p>${item.nome} - R$ ${item.preco.toFixed(2)}</p>
+                    <p><img src="${item.imagem}" alt="${item.nome}" style="max-width: 50px; margin-right: 10px;"/> ${item.nome} - R$ ${item.preco.toFixed(2)}</p>
                 `;
                 itensCarrinho.appendChild(itemCarrinho);
                 total += item.preco;
@@ -323,6 +439,15 @@
             }, 3000);
         }
 
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('header').classList.toggle('dark-mode');
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.toggle('dark-mode');
+            });
+            document.querySelector('.notificacao').classList.toggle('dark-mode');
+        }
+
         // Mostrar a home por padrão ao carregar
         mostrarHome();
 	</script>
@@ -330,3 +455,18 @@
 </body>
 
 </html>
+<div>
+	<h3>Avaliações</h3>
+	<div id="avaliacoesProduto"></div>
+	<div class="form-container">
+		<div id="avaliacaoEstrelas" style="cursor: pointer;">
+			<span class="estrela" data-estrela="1">★</span>
+			<span class="estrela" data-estrela="2">★</span>
+			<span class="estrela" data-estrela="3">★</span>
+			<span class="estrela" data-estrela="4">★</span>
+			<span class="estrela" data-estrela="5">★</span>
+		</div>
+		<textarea id="campoAvaliacao" placeholder="Deixe sua avaliação..." rows="3"></textarea>
+		<button onclick="adicionarAvaliacao()">Enviar Avaliação</button>
+	</div>
+</div>
